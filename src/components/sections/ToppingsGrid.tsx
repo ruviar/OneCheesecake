@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import {
   COOKIE_TOPPINGS,
@@ -12,94 +12,24 @@ import {
 } from "@/lib/data/menu";
 import { gsap, useGSAP } from "@/lib/gsap";
 
+type Tab = "sauce" | "cookie";
+
 /** "Dulce de Leche" -> "/images/toppings/sauce-dulce-de-leche.png" */
-function toppingImage(type: "sauce" | "cookie", name: string): string {
+function toppingImage(type: Tab, name: string): string {
   return `/images/toppings/${type}-${name.toLowerCase().replace(/\s+/g, "-")}.png`;
 }
 
-function ToppingMarquee({
-  title,
-  items,
-  direction = "ltr",
-}: {
-  title: string;
-  items: readonly string[];
-  direction?: "ltr" | "rtl";
-}) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      const track = trackRef.current;
-      if (!track) return;
-
-      const isRtl = direction === "rtl";
-      const distance = 50; // % de desplazamiento
-
-      const tl = gsap.to(track, {
-        xPercent: isRtl ? distance : -distance,
-        duration: 28,
-        ease: "none",
-        repeat: -1,
-      });
-
-      // Pausa al hover
-      const wrap = wrapRef.current;
-      wrap?.addEventListener("mouseenter", () => tl.pause());
-      wrap?.addEventListener("mouseleave", () => tl.play());
-
-      return () => {
-        wrap?.removeEventListener("mouseenter", () => tl.pause());
-        wrap?.removeEventListener("mouseleave", () => tl.play());
-      };
-    });
-  });
-
-  // Duplicar items para seamless loop
-  const doubled = [...items, ...items];
-
-  return (
-    <div ref={wrapRef} className="group overflow-hidden">
-      <p className="mb-4 flex items-center gap-3 font-accent text-xl text-dusty-blue">
-        {title}
-        <span aria-hidden className="h-px flex-1 bg-dusty-blue/15" />
-      </p>
-      <div className="relative">
-        <div ref={trackRef} className="flex w-max gap-4 md:gap-6">
-          {doubled.map((name, i) => {
-            const type = SAUCE_TOPPINGS.includes(name) ? "sauce" : "cookie";
-            const isSecond = i >= items.length;
-            return (
-              <div
-                key={`${name}-${isSecond}`}
-                data-topping-card
-                className="group/card shrink-0 transition-transform duration-300 group-hover:scale-105"
-              >
-                <div className="relative h-40 w-40 md:h-48 md:w-48 overflow-hidden rounded-2xl shadow-lg">
-                  <Image
-                    src={toppingImage(type, name)}
-                    alt={`Topping de ${name.toLowerCase()}`}
-                    fill
-                    sizes="(min-width: 768px) 192px, 160px"
-                    className="object-cover transition-opacity duration-300 group-hover/card:opacity-90"
-                  />
-                </div>
-                <p className="mt-3 text-center font-sans font-semibold text-chocolate">
-                  {name}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
+const TABS: readonly { id: Tab; label: string; items: readonly string[] }[] = [
+  { id: "sauce", label: "Salsas", items: SAUCE_TOPPINGS },
+  { id: "cookie", label: "Galleta", items: COOKIE_TOPPINGS },
+];
 
 export default function ToppingsGrid() {
   const sectionRef = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [tab, setTab] = useState<Tab>("sauce");
+
+  const items = tab === "sauce" ? SAUCE_TOPPINGS : COOKIE_TOPPINGS;
 
   useGSAP(
     () => {
@@ -115,6 +45,24 @@ export default function ToppingsGrid() {
       });
     },
     { scope: sectionRef },
+  );
+
+  // Anima las tarjetas nuevas cada vez que cambia la pestaña
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from("[data-topping-card]", {
+          y: 28,
+          autoAlpha: 0,
+          scale: 0.92,
+          stagger: 0.05,
+          duration: 0.5,
+          ease: "power3.out",
+        });
+      });
+    },
+    { scope: gridRef, dependencies: [tab] },
   );
 
   return (
@@ -143,10 +91,54 @@ export default function ToppingsGrid() {
         </p>
       </div>
 
-      {/* Cintas infinitas */}
-      <div className="mt-14 space-y-10 md:mt-20 md:space-y-12">
-        <ToppingMarquee title="Salsas" items={SAUCE_TOPPINGS} direction="ltr" />
-        <ToppingMarquee title="Galleta" items={COOKIE_TOPPINGS} direction="rtl" />
+      {/* Selector de pestañas */}
+      <div
+        data-section-reveal
+        role="tablist"
+        aria-label="Tipo de topping"
+        className="mt-12 inline-flex gap-1 rounded-full bg-chocolate/5 p-1.5 md:mt-16"
+      >
+        {TABS.map((t) => {
+          const selected = t.id === tab;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setTab(t.id)}
+              className={`rounded-full px-7 py-2.5 font-sans text-sm font-semibold transition-colors duration-300 md:text-base ${
+                selected
+                  ? "bg-chocolate text-cream"
+                  : "text-chocolate/60 hover:text-chocolate"
+              }`}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Grid del grupo activo */}
+      <div
+        ref={gridRef}
+        role="tabpanel"
+        className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-3 md:mt-12 md:grid-cols-4 md:gap-8 lg:grid-cols-7"
+      >
+        {items.map((name) => (
+          <article key={name} data-topping-card className="group">
+            <div className="relative aspect-square overflow-hidden rounded-2xl shadow-[0_14px_28px_rgba(74,46,27,0.15)]">
+              <Image
+                src={toppingImage(tab, name)}
+                alt={`Topping de ${name.toLowerCase()}`}
+                fill
+                sizes="(min-width: 1024px) 14vw, (min-width: 640px) 30vw, 45vw"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+              />
+            </div>
+            <p className="mt-3 text-center font-sans font-semibold text-chocolate">{name}</p>
+          </article>
+        ))}
       </div>
 
       {/* Bebidas */}
