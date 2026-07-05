@@ -66,7 +66,7 @@ export default function ToppingsGrid() {
   );
 
   return (
-    <section ref={sectionRef} id="toppings" className="container-melt py-28 md:py-40">
+    <section ref={sectionRef} id="toppings" className="container-melt pb-16 pt-28 md:pb-20 md:pt-40">
       {/* Cabecera */}
       <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-6">
         <div>
@@ -144,7 +144,7 @@ export default function ToppingsGrid() {
       {/* Bebidas */}
       <p
         data-section-reveal
-        className="mt-20 text-center font-sans text-xs font-semibold uppercase tracking-[0.2em] text-chocolate/60 md:mt-28 md:text-sm"
+        className="mt-14 text-center font-sans text-xs font-semibold uppercase tracking-[0.2em] text-chocolate/60 md:mt-20 md:text-sm"
       >
         <span className="text-chocolate/40">Para acompañar — </span>
         {DRINKS.map((drink, i) => (

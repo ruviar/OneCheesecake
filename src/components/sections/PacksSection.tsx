@@ -35,8 +35,8 @@ export default function PacksSection() {
   );
 
   return (
-    <section ref={sectionRef} id="packs" className="container-melt py-28 md:py-36">
-      <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+    <section ref={sectionRef} id="packs" className="container-melt pb-28 pt-12 md:pb-36 md:pt-16">
+      <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
         <h2
           data-section-reveal
           className="font-wonk font-display text-5xl font-semibold leading-[0.9] text-chocolate md:text-7xl"

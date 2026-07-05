@@ -113,6 +113,24 @@ export default function Footer() {
           >
             Abrir en Google Maps ↗
           </a>
+
+          {/* Mapa embebido de la ubicación */}
+          <a
+            data-footer-reveal
+            href={BUSINESS.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Ver One Cheesecake en Google Maps"
+            className="group mt-8 block overflow-hidden rounded-2xl border border-cream/15 shadow-[0_20px_40px_rgba(0,0,0,0.25)]"
+          >
+            <iframe
+              title="Mapa de One Cheesecake — C/ Pablo Casals 17, Zaragoza"
+              src="https://www.google.com/maps?q=C%2F%20Pablo%20Casals%2017%2C%20Zaragoza&z=16&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="pointer-events-none block h-64 w-full grayscale transition-all duration-500 group-hover:grayscale-0 md:h-72"
+            />
+          </a>
         </div>
 
         {/* Dónde / Cuándo */}
