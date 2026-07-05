@@ -35,8 +35,7 @@ export const CAKES: readonly Cake[] = [
   { id: "choco-blanco", name: "Choco Blanco", note: "dulce, sedosa, peligrosa", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_chocoblanco.png" },
   { id: "lotus", name: "La Lotus", note: "caramelizada y especiada", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_lotus.png" },
   { id: "pistachito", name: "Pistachito", note: "verde, salado, adictivo", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_pistacho.png" },
-  // TODO: sustituir imagen cuando exista foto real de Caramelo y Pretzel
-  { id: "especial-mes", name: "Caramelo y Pretzel", note: "dulce + salado, solo este mes", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_croissant.png", special: true },
+  { id: "croissant", name: "El Croissant", note: "la clásica, con croissant por dentro", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_croissant.png", special: true },
 ];
 
 export const TOPPING_PRICE = 0.8;

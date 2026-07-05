@@ -12,15 +12,45 @@ import {
 } from "@/lib/data/menu";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-interface ToppingItem {
-  name: string;
-  type: "sauce" | "cookie";
+/** "Dulce de Leche" -> "/images/toppings/sauce-dulce-de-leche.png" */
+function toppingImage(type: "sauce" | "cookie", name: string): string {
+  return `/images/toppings/${type}-${name.toLowerCase().replace(/\s+/g, "-")}.png`;
 }
 
-const ALL_TOPPINGS: ToppingItem[] = [
-  ...SAUCE_TOPPINGS.map((name) => ({ name, type: "sauce" as const })),
-  ...COOKIE_TOPPINGS.map((name) => ({ name, type: "cookie" as const })),
-];
+function ToppingGroup({
+  title,
+  type,
+  items,
+}: {
+  title: string;
+  type: "sauce" | "cookie";
+  items: readonly string[];
+}) {
+  return (
+    <div data-topping-group>
+      <h3 className="flex items-center gap-4 font-sans text-sm font-bold uppercase tracking-[0.25em] text-chocolate/50">
+        {title}
+        <span aria-hidden className="h-px flex-1 bg-chocolate/15" />
+      </h3>
+      <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 md:gap-7">
+        {items.map((name) => (
+          <article key={name} data-topping-card className="group">
+            <div className="relative aspect-square overflow-hidden rounded-2xl">
+              <Image
+                src={toppingImage(type, name)}
+                alt={`Topping de ${name.toLowerCase()}`}
+                fill
+                sizes="(min-width: 768px) 22vw, 45vw"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+              />
+            </div>
+            <h4 className="mt-3 font-sans font-semibold text-chocolate">{name}</h4>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function ToppingsGrid() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -37,13 +67,15 @@ export default function ToppingsGrid() {
           scrollTrigger: { trigger: sectionRef.current, start: "top 72%", once: true },
         });
 
-        gsap.from("[data-topping-card]", {
-          y: 48,
-          autoAlpha: 0,
-          stagger: 0.06,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: "[data-toppings-grid]", start: "top 80%", once: true },
+        gsap.utils.toArray<HTMLElement>("[data-topping-group]").forEach((group) => {
+          gsap.from(group.querySelectorAll("[data-topping-card]"), {
+            y: 40,
+            autoAlpha: 0,
+            stagger: 0.05,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: { trigger: group, start: "top 80%", once: true },
+          });
         });
       });
     },
@@ -52,7 +84,7 @@ export default function ToppingsGrid() {
 
   return (
     <section ref={sectionRef} id="toppings" className="container-melt py-28 md:py-40">
-      {/* Cabecera */}
+      {/* Cabecera: título a la izquierda, precio único como nota al margen */}
       <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-6">
         <div>
           <p data-section-reveal className="font-accent text-2xl text-dusty-blue md:text-3xl">
@@ -63,8 +95,7 @@ export default function ToppingsGrid() {
             className="font-wonk mt-3 font-display text-5xl font-semibold leading-[0.9] text-chocolate md:text-7xl"
           >
             Móntatela
-            <br />
-            a tu gusto
+            <br />a tu gusto
           </h2>
         </div>
         <p
@@ -77,42 +108,12 @@ export default function ToppingsGrid() {
         </p>
       </div>
 
-      {/* Grid de toppings con imágenes */}
-      <div
-        data-toppings-grid
-        className="mt-16 grid gap-6 md:mt-24 md:grid-cols-4 md:gap-8 sm:grid-cols-2"
-      >
-        {ALL_TOPPINGS.map((topping) => (
-          <article key={topping.name} data-topping-card className="flex flex-col">
-            {/* Placeholder para imagen (reemplazar con foto real) */}
-            <div className="relative mb-3 aspect-square overflow-hidden rounded-lg bg-gradient-to-br from-chocolate/10 to-dusty-blue/10">
-              <Image
-                src={`/images/toppings/${topping.type}-${topping.name.toLowerCase().replace(/\s+/g, "-")}.png`}
-                alt={topping.name}
-                fill
-                className="object-cover"
-                sizes="(min-width: 768px) 25vw, (min-width: 640px) 50vw, 100vw"
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  img.style.opacity = "0";
-                }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0">
-                <span className="text-xs text-chocolate/30">
-                  {topping.name.toLowerCase()}
-                </span>
-              </div>
-            </div>
-
-            <h3 className="font-sans font-semibold text-chocolate">{topping.name}</h3>
-            <p className="mt-1 text-sm font-semibold text-chocolate/60">
-              +{formatPrice(TOPPING_PRICE)}
-            </p>
-          </article>
-        ))}
+      <div className="mt-16 space-y-20 md:mt-24">
+        <ToppingGroup title="Salsas" type="sauce" items={SAUCE_TOPPINGS} />
+        <ToppingGroup title="Galleta" type="cookie" items={COOKIE_TOPPINGS} />
       </div>
 
-      {/* Bebidas */}
+      {/* Bebidas: una sola línea utilitaria */}
       <p
         data-section-reveal
         className="mt-20 text-center font-sans text-xs font-semibold uppercase tracking-[0.2em] text-chocolate/60 md:mt-28 md:text-sm"
