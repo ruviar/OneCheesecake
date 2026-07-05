@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Shrikhand, Caveat, Quicksand } from "next/font/google";
+import { Loader } from "@/components/Loader";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -52,7 +53,10 @@ export default function RootLayout({
       lang="es"
       className={`${fraunces.variable} ${shrikhand.variable} ${caveat.variable} ${quicksand.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <Loader />
+        {children}
+      </body>
     </html>
   );
 }

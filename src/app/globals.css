@@ -34,10 +34,7 @@ body {
   }
 
   .btn-retro {
-    @apply inline-flex items-center gap-2 rounded-ticket border-2 border-choco-700 bg-cream-100 px-6 py-3
-           font-display font-black uppercase tracking-wide text-choco-700 shadow-retro
-           transition-transform duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px]
-           active:translate-x-0 active:translate-y-0 active:shadow-none;
+    @apply inline-flex items-center gap-2 rounded-ticket border-2 border-choco-700 bg-cream-100 px-6 py-3 font-display font-black uppercase tracking-wide text-choco-700 shadow-retro transition-transform duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] active:translate-x-0 active:translate-y-0 active:shadow-none;
   }
 
   .btn-retro--blue {
@@ -45,8 +42,7 @@ body {
   }
 
   .pill {
-    @apply inline-flex items-center gap-2 rounded-full border border-choco-700/30 bg-cream-50 px-4 py-1.5
-           text-xs uppercase tracking-[0.18em] text-choco-700;
+    @apply inline-flex items-center gap-2 rounded-full border border-choco-700/30 bg-cream-50 px-4 py-1.5 text-xs uppercase tracking-[0.18em] text-choco-700;
   }
 
   .hand-underline {
@@ -65,7 +61,10 @@ body {
 }
 
 @layer utilities {
-  .text-balance { text-wrap: balance; }
+  .text-balance {
+    text-wrap: balance;
+  }
+
   .grain::before {
     content: "";
     position: absolute;

@@ -1,7 +1,7 @@
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { Marquee } from "@/components/Marquee";
-import { FlavorGallery } from "@/components/FlavorGallery";
+import { FlavorScroll } from "@/components/FlavorScroll";
 import { FlyingToppings } from "@/components/FlyingToppings";
 import { MenuVintage } from "@/components/MenuVintage";
 import { Footer } from "@/components/Footer";
@@ -12,7 +12,7 @@ export default function Page() {
       <Header />
       <Hero />
       <Marquee />
-      <FlavorGallery />
+      <FlavorScroll />
       <FlyingToppings />
       <MenuVintage />
       <Footer />
