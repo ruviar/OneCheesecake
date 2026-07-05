@@ -69,9 +69,7 @@ function ToppingMarquee({
       <div className="relative">
         <div ref={trackRef} className="flex w-max gap-4 md:gap-6">
           {doubled.map((name, i) => {
-            const type = items.includes(name as any) && SAUCE_TOPPINGS.includes(name as any)
-              ? "sauce"
-              : "cookie";
+            const type = SAUCE_TOPPINGS.includes(name) ? "sauce" : "cookie";
             const isSecond = i >= items.length;
             return (
               <div
