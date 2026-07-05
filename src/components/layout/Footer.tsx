@@ -1,0 +1,163 @@
+"use client";
+
+import Image from "next/image";
+import { useRef } from "react";
+
+import Marquee from "@/components/ui/Marquee";
+import { BUSINESS } from "@/lib/data/menu";
+import { gsap, useGSAP } from "@/lib/gsap";
+
+function InfoLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="font-sans text-xs font-bold uppercase tracking-[0.25em] text-cream/50">
+      {children}
+    </h3>
+  );
+}
+
+export default function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+  // Capas separadas: pop de entrada (outer) + flotación idle (inner)
+  const mascotPopRef = useRef<HTMLDivElement>(null);
+  const mascotFloatRef = useRef<HTMLDivElement>(null);
+
+  const { contextSafe } = useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from("[data-footer-reveal]", {
+          y: 40,
+          autoAlpha: 0,
+          stagger: 0.1,
+          duration: 0.8,
+          scrollTrigger: { trigger: footerRef.current, start: "top 75%", once: true },
+        });
+
+        // La mascota se asoma por el borde con rebote elástico…
+        gsap.from(mascotPopRef.current, {
+          y: 160,
+          rotation: 12,
+          duration: 1.2,
+          ease: "elastic.out(1, 0.55)",
+          scrollTrigger: { trigger: footerRef.current, start: "top 70%", once: true },
+        });
+        // …y luego flota
+        gsap.to(mascotFloatRef.current, {
+          y: "-=10",
+          duration: 2.4,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          delay: 1.4,
+        });
+      });
+    },
+    { scope: footerRef },
+  );
+
+  const wiggle = contextSafe(() => {
+    gsap.to(mascotFloatRef.current, {
+      keyframes: [
+        { rotation: -8, duration: 0.1 },
+        { rotation: 8, duration: 0.12 },
+        { rotation: -5, duration: 0.12 },
+        { rotation: 5, duration: 0.12 },
+        { rotation: 0, duration: 0.14 },
+      ],
+      overwrite: "auto",
+    });
+  });
+
+  return (
+    <footer ref={footerRef} id="visitanos" className="relative bg-chocolate text-cream">
+      {/* Mascota asomándose por el borde superior */}
+      <div
+        ref={mascotPopRef}
+        className="absolute -top-[5.5rem] right-[6%] z-10 w-24 md:-top-32 md:right-[8%] md:w-40"
+      >
+        <div ref={mascotFloatRef} onMouseEnter={wiggle} data-cursor-hover>
+          <Image
+            src={BUSINESS.mascot}
+            alt="Mascota de One Cheesecake: una porción de tarta de dibujos animados saludando"
+            width={1024}
+            height={1024}
+            className="h-auto w-full drop-shadow-[0_12px_20px_rgba(74,46,27,0.35)]"
+            sizes="(min-width: 768px) 160px, 96px"
+          />
+        </div>
+      </div>
+
+      {/* Bookend del slogan */}
+      <Marquee text="Un euro. Un placer. Una experiencia." speed={26} className="border-b border-cream/10" />
+
+      <div className="container-melt grid gap-14 py-20 md:grid-cols-12 md:gap-10 md:py-28">
+        {/* Cierre grande + CTA */}
+        <div className="md:col-span-6">
+          <p data-footer-reveal className="font-accent text-3xl text-gold">
+            te esperamos
+          </p>
+          <h2
+            data-footer-reveal
+            className="font-wonk mt-3 font-display text-5xl font-semibold leading-[0.9] md:text-7xl"
+          >
+            Ven a por
+            <br />
+            la tuya
+          </h2>
+          <a
+            data-footer-reveal
+            href={BUSINESS.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-9 inline-block rounded-full bg-cream px-7 py-3.5 font-sans text-sm font-semibold text-chocolate transition-transform duration-300 hover:scale-105 md:text-base"
+          >
+            Abrir en Google Maps ↗
+          </a>
+        </div>
+
+        {/* Dónde / Cuándo */}
+        <div data-footer-reveal className="space-y-10 md:col-span-3">
+          <div>
+            <InfoLabel>Dónde</InfoLabel>
+            <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.address}</p>
+            <p className="mt-1 font-accent text-2xl text-gold">a 3 min de GranCasa</p>
+          </div>
+          <div>
+            <InfoLabel>Cuándo</InfoLabel>
+            <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.hours}</p>
+            <p className="mt-1 font-sans text-sm text-cream/60">Domingos y lunes, cerrado</p>
+          </div>
+        </div>
+
+        {/* Cómo llegar */}
+        <div data-footer-reveal className="space-y-10 md:col-span-3">
+          <div>
+            <InfoLabel>Tranvía</InfoLabel>
+            <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.transport.tram}</p>
+          </div>
+          <div>
+            <InfoLabel>Bus</InfoLabel>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {BUSINESS.transport.bus.map((line) => (
+                <li
+                  key={line}
+                  className="rounded-full border border-cream/25 px-3.5 py-1.5 font-sans text-sm font-semibold text-cream/90"
+                >
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Barra legal */}
+      <div className="border-t border-cream/10">
+        <div className="container-melt flex flex-wrap items-center justify-between gap-4 py-6 font-sans text-xs text-cream/50">
+          <p>© {new Date().getFullYear()} One Cheesecake · Zaragoza</p>
+          <p className="font-accent text-lg text-gold/80">hecho con mucho queso</p>
+        </div>
+      </div>
+    </footer>
+  );
+}

@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Lenis (recomendado por Studio Freight) ---------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-cream font-sans text-chocolate antialiased;
+    /* Nunca blanco puro: el cream es el lienzo de todo el sitio */
+  }
+
+  ::selection {
+    @apply bg-gold/40 text-chocolate;
+  }
+
+  a,
+  button {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cream;
+  }
+
+  /* Cursor nativo oculto solo cuando el custom cursor está activo (JS lo aplica) */
+  html.custom-cursor,
+  html.custom-cursor a,
+  html.custom-cursor button {
+    cursor: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  /* Contenedor de página con el negative space generoso del estilo Melt */
+  .container-melt {
+    @apply mx-auto w-full max-w-[1440px] px-6 md:px-12 lg:px-20;
+  }
+
+  /* Ejes variables de Fraunces: toque retro "wonky" para display gigante */
+  .font-wonk {
+    font-variation-settings: "SOFT" 40, "WONK" 1;
+  }
+}
