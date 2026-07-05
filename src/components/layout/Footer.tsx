@@ -90,9 +90,9 @@ export default function Footer() {
       {/* Bookend del slogan */}
       <Marquee text="Un euro. Un placer. Una experiencia." speed={26} className="border-b border-cream/10" />
 
-      <div className="container-melt grid gap-14 py-20 md:grid-cols-12 md:gap-10 md:py-28">
-        {/* Cierre grande + CTA */}
-        <div className="md:col-span-6">
+      <div className="container-melt grid gap-14 py-20 md:grid-cols-2 md:gap-16 md:py-28">
+        {/* Izquierda: cierre grande + CTA */}
+        <div className="md:self-center">
           <p data-footer-reveal className="font-accent text-3xl text-gold">
             te esperamos
           </p>
@@ -113,7 +113,10 @@ export default function Footer() {
           >
             Abrir en Google Maps ↗
           </a>
+        </div>
 
+        {/* Derecha: mapa + info debajo */}
+        <div className="space-y-10">
           {/* Mapa embebido de la ubicación */}
           <a
             data-footer-reveal
@@ -121,7 +124,7 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Ver One Cheesecake en Google Maps"
-            className="group mt-8 block overflow-hidden rounded-2xl border border-cream/15 shadow-[0_20px_40px_rgba(0,0,0,0.25)]"
+            className="group block overflow-hidden rounded-2xl border border-cream/15 shadow-[0_20px_40px_rgba(0,0,0,0.25)]"
           >
             <iframe
               title="Mapa de One Cheesecake — C/ Pablo Casals 17, Zaragoza"
@@ -131,40 +134,40 @@ export default function Footer() {
               className="pointer-events-none block h-64 w-full grayscale transition-all duration-500 group-hover:grayscale-0 md:h-72"
             />
           </a>
-        </div>
 
-        {/* Dónde / Cuándo */}
-        <div data-footer-reveal className="space-y-10 md:col-span-3">
-          <div>
-            <InfoLabel>Dónde</InfoLabel>
-            <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.address}</p>
-            <p className="mt-1 font-accent text-2xl text-gold">a 3 min de GranCasa</p>
-          </div>
-          <div>
-            <InfoLabel>Cuándo</InfoLabel>
-            <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.hours}</p>
-            <p className="mt-1 font-sans text-sm text-cream/60">Domingos y lunes, cerrado</p>
-          </div>
-        </div>
-
-        {/* Cómo llegar */}
-        <div data-footer-reveal className="space-y-10 md:col-span-3">
-          <div>
-            <InfoLabel>Tranvía</InfoLabel>
-            <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.transport.tram}</p>
-          </div>
-          <div>
-            <InfoLabel>Bus</InfoLabel>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {BUSINESS.transport.bus.map((line) => (
-                <li
-                  key={line}
-                  className="rounded-full border border-cream/25 px-3.5 py-1.5 font-sans text-sm font-semibold text-cream/90"
-                >
-                  {line}
-                </li>
-              ))}
-            </ul>
+          {/* Info debajo del mapa */}
+          <div data-footer-reveal className="grid gap-10 sm:grid-cols-2">
+            <div className="space-y-10">
+              <div>
+                <InfoLabel>Dónde</InfoLabel>
+                <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.address}</p>
+                <p className="mt-1 font-accent text-2xl text-gold">a 3 min de GranCasa</p>
+              </div>
+              <div>
+                <InfoLabel>Cuándo</InfoLabel>
+                <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.hours}</p>
+                <p className="mt-1 font-sans text-sm text-cream/60">Domingos y lunes, cerrado</p>
+              </div>
+            </div>
+            <div className="space-y-10">
+              <div>
+                <InfoLabel>Tranvía</InfoLabel>
+                <p className="mt-4 font-sans text-lg font-semibold">{BUSINESS.transport.tram}</p>
+              </div>
+              <div>
+                <InfoLabel>Bus</InfoLabel>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {BUSINESS.transport.bus.map((line) => (
+                    <li
+                      key={line}
+                      className="rounded-full border border-cream/25 px-3.5 py-1.5 font-sans text-sm font-semibold text-cream/90"
+                    >
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

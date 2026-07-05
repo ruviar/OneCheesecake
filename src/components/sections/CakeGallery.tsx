@@ -3,13 +3,76 @@
 import Image from "next/image";
 import { useRef } from "react";
 
-import { CAKES, formatPrice } from "@/lib/data/menu";
+import { CAKES, type Cake, formatPrice } from "@/lib/data/menu";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-// Grid masonry: todas las tartas visibles sin scroll horizontal.
-// 2-3 columnas en desktop, 1 en móvil, alturas variadas para ritmo asimétrico.
+function CakeCard({ cake, featured = false }: { cake: Cake; featured?: boolean }) {
+  return (
+    <article
+      data-cake-card
+      className={`flex flex-col ${featured ? "items-center text-center" : ""}`}
+    >
+      {cake.special && (
+        <span className="mb-2 inline-block w-fit -rotate-2 rounded-full bg-dusty-blue px-4 py-1.5 font-sans text-xs font-bold uppercase tracking-widest text-cream">
+          Especial del mes
+        </span>
+      )}
+
+      <div className="relative w-full">
+        <Image
+          src={cake.image}
+          alt={`Porción de tarta de queso ${cake.name}`}
+          width={2816}
+          height={1536}
+          sizes={
+            featured
+              ? "(min-width: 768px) 640px, 100%"
+              : "(min-width: 768px) calc(33.333% - 27px), 100%"
+          }
+          priority={featured}
+          className="h-auto w-full rounded-sm drop-shadow-[0_24px_36px_rgba(74,46,27,0.2)]"
+        />
+      </div>
+
+      <div className="relative z-10 -mt-3 md:-mt-5">
+        <h3
+          className={`font-wonk font-display font-semibold leading-none text-chocolate ${
+            featured ? "text-4xl md:text-6xl" : "text-3xl md:text-4xl"
+          }`}
+        >
+          {cake.name}
+        </h3>
+        <p
+          className={`mt-2 font-accent text-dusty-blue ${
+            featured ? "text-xl md:text-2xl" : "text-lg md:text-xl"
+          }`}
+        >
+          {cake.note}
+        </p>
+        <p className="mt-3 font-sans text-sm font-semibold text-chocolate">
+          <span
+            className={`font-display ${featured ? "text-2xl md:text-3xl" : "text-xl md:text-2xl"}`}
+          >
+            {formatPrice(cake.slicePrice)}
+          </span>
+          <span className="text-chocolate/60"> / porción</span>
+          <span aria-hidden className="mx-2 text-gold">
+            ✦
+          </span>
+          <span className="text-chocolate/60">entera </span>
+          {formatPrice(cake.wholePrice)}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+// Especial del mes destacada arriba y centrada; el resto en grid alineado.
 export default function CakeGallery() {
   const sectionRef = useRef<HTMLElement>(null);
+
+  const featured = CAKES.find((cake) => cake.special);
+  const rest = CAKES.filter((cake) => !cake.special);
 
   useGSAP(
     () => {
@@ -58,51 +121,20 @@ export default function CakeGallery() {
         </p>
       </div>
 
-      {/* Grid masonry */}
-      <div
-        data-cakes-grid
-        className="mt-16 grid gap-8 md:mt-24 md:grid-cols-3 md:gap-10 [&>:nth-child(2)]:md:translate-y-12 [&>:nth-child(3)]:md:-translate-y-6 [&>:nth-child(5)]:md:translate-y-8"
-      >
-        {CAKES.map((cake) => (
-          <article key={cake.id} data-cake-card className="flex flex-col">
-            {cake.special && (
-              <span className="mb-2 inline-block w-fit -rotate-2 rounded-full bg-dusty-blue px-4 py-1.5 font-sans text-xs font-bold uppercase tracking-widest text-cream">
-                Especial del mes
-              </span>
-            )}
+      {/* Especial del mes: destacada, grande y centrada */}
+      <div data-cakes-grid className="mt-16 md:mt-24">
+        {featured && (
+          <div className="mx-auto max-w-lg md:max-w-2xl">
+            <CakeCard cake={featured} featured />
+          </div>
+        )}
 
-            <div className="relative">
-              <Image
-                src={cake.image}
-                alt={`Porción de tarta de queso ${cake.name}`}
-                width={2816}
-                height={1536}
-                sizes="(min-width: 768px) calc(33.333% - 27px), 100%"
-                className="h-auto w-full rounded-sm drop-shadow-[0_24px_36px_rgba(74,46,27,0.2)]"
-              />
-            </div>
-
-            <div className="relative z-10 -mt-3 md:-mt-5">
-              <h3 className="font-wonk font-display text-3xl font-semibold leading-none text-chocolate md:text-4xl">
-                {cake.name}
-              </h3>
-              <p className="mt-2 font-accent text-lg text-dusty-blue md:text-xl">
-                {cake.note}
-              </p>
-              <p className="mt-3 font-sans text-sm font-semibold text-chocolate">
-                <span className="font-display text-xl md:text-2xl">
-                  {formatPrice(cake.slicePrice)}
-                </span>
-                <span className="text-chocolate/60"> / porción</span>
-                <span aria-hidden className="mx-2 text-gold">
-                  ✦
-                </span>
-                <span className="text-chocolate/60">entera </span>
-                {formatPrice(cake.wholePrice)}
-              </p>
-            </div>
-          </article>
-        ))}
+        {/* Resto, alineadas en filas limpias */}
+        <div className="mt-16 grid gap-8 md:mt-24 md:grid-cols-3 md:gap-x-10 md:gap-y-16">
+          {rest.map((cake) => (
+            <CakeCard key={cake.id} cake={cake} />
+          ))}
+        </div>
       </div>
     </section>
   );
