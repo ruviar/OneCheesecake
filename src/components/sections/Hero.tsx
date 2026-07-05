@@ -137,6 +137,11 @@ export default function Hero() {
 
       {/* Porción flotante superpuesta al titular */}
       <div ref={parallaxRef} className="relative z-10 -mt-[6vw] md:-mt-[5vw]">
+        {/* Overlay oscuro difuminado detrás */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 translate-y-1/2 bg-gradient-to-b from-chocolate/0 via-chocolate/15 to-chocolate/0 blur-3xl"
+        />
         <div ref={floatRef} className="relative mx-auto w-[min(78vw,700px)]">
           <div ref={imgRef} className="relative">
             <Image

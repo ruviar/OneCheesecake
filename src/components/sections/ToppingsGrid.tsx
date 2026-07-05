@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef } from "react";
 
 import {
@@ -11,38 +12,15 @@ import {
 } from "@/lib/data/menu";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-// Etiquetas manuscritas: tamaño y rotación ciclan para el efecto "pizarra"
-const SIZES = [
-  "text-4xl md:text-5xl",
-  "text-3xl md:text-4xl",
-  "text-5xl md:text-6xl",
-] as const;
-const TILTS = ["-rotate-3", "rotate-2", "-rotate-1", "rotate-3"] as const;
-const INKS = ["text-chocolate", "text-chocolate/75", "text-dusty-blue"] as const;
-
-function ToppingCloud({ title, items }: { title: string; items: readonly string[] }) {
-  return (
-    <div>
-      <h3 className="flex items-center gap-4 font-sans text-sm font-bold uppercase tracking-[0.25em] text-chocolate/50">
-        {title}
-        <span aria-hidden className="h-px flex-1 bg-chocolate/15" />
-      </h3>
-      <ul className="mt-8 flex flex-wrap items-baseline gap-x-8 gap-y-5">
-        {items.map((topping, i) => (
-          <li
-            key={topping}
-            data-topping
-            className={`inline-block cursor-default font-accent leading-none transition-transform duration-300 hover:-translate-y-1 hover:text-gold ${
-              SIZES[i % SIZES.length]
-            } ${TILTS[i % TILTS.length]} ${INKS[i % INKS.length]}`}
-          >
-            {topping}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+interface ToppingItem {
+  name: string;
+  type: "sauce" | "cookie";
 }
+
+const ALL_TOPPINGS: ToppingItem[] = [
+  ...SAUCE_TOPPINGS.map((name) => ({ name, type: "sauce" as const })),
+  ...COOKIE_TOPPINGS.map((name) => ({ name, type: "cookie" as const })),
+];
 
 export default function ToppingsGrid() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -59,17 +37,13 @@ export default function ToppingsGrid() {
           scrollTrigger: { trigger: sectionRef.current, start: "top 72%", once: true },
         });
 
-        // Las etiquetas caen con rotación aleatoria y orden barajado
-        gsap.utils.toArray<HTMLElement>("[data-topping-cloud]").forEach((cloud) => {
-          gsap.from(cloud.querySelectorAll("[data-topping]"), {
-            y: 28,
-            autoAlpha: 0,
-            rotation: () => gsap.utils.random(-14, 14),
-            duration: 0.6,
-            ease: "back.out(1.6)",
-            stagger: { each: 0.06, from: "random" },
-            scrollTrigger: { trigger: cloud, start: "top 80%", once: true },
-          });
+        gsap.from("[data-topping-card]", {
+          y: 48,
+          autoAlpha: 0,
+          stagger: 0.06,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: { trigger: "[data-toppings-grid]", start: "top 80%", once: true },
         });
       });
     },
@@ -78,7 +52,7 @@ export default function ToppingsGrid() {
 
   return (
     <section ref={sectionRef} id="toppings" className="container-melt py-28 md:py-40">
-      {/* Cabecera asimétrica: título a la izquierda, precio único como nota al margen */}
+      {/* Cabecera */}
       <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-6">
         <div>
           <p data-section-reveal className="font-accent text-2xl text-dusty-blue md:text-3xl">
@@ -89,7 +63,8 @@ export default function ToppingsGrid() {
             className="font-wonk mt-3 font-display text-5xl font-semibold leading-[0.9] text-chocolate md:text-7xl"
           >
             Móntatela
-            <br />a tu gusto
+            <br />
+            a tu gusto
           </h2>
         </div>
         <p
@@ -102,17 +77,42 @@ export default function ToppingsGrid() {
         </p>
       </div>
 
-      {/* Grid roto: salsas arriba-izquierda, galletas abajo-derecha */}
-      <div className="mt-16 grid gap-16 md:mt-24 md:grid-cols-12 md:gap-10">
-        <div data-topping-cloud className="md:col-span-7">
-          <ToppingCloud title="Salsas" items={SAUCE_TOPPINGS} />
-        </div>
-        <div data-topping-cloud className="md:col-span-5 md:mt-28">
-          <ToppingCloud title="Galleta" items={COOKIE_TOPPINGS} />
-        </div>
+      {/* Grid de toppings con imágenes */}
+      <div
+        data-toppings-grid
+        className="mt-16 grid gap-6 md:mt-24 md:grid-cols-4 md:gap-8 sm:grid-cols-2"
+      >
+        {ALL_TOPPINGS.map((topping) => (
+          <article key={topping.name} data-topping-card className="flex flex-col">
+            {/* Placeholder para imagen (reemplazar con foto real) */}
+            <div className="relative mb-3 aspect-square overflow-hidden rounded-lg bg-gradient-to-br from-chocolate/10 to-dusty-blue/10">
+              <Image
+                src={`/images/toppings/${topping.type}-${topping.name.toLowerCase().replace(/\s+/g, "-")}.png`}
+                alt={topping.name}
+                fill
+                className="object-cover"
+                sizes="(min-width: 768px) 25vw, (min-width: 640px) 50vw, 100vw"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  img.style.opacity = "0";
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0">
+                <span className="text-xs text-chocolate/30">
+                  {topping.name.toLowerCase()}
+                </span>
+              </div>
+            </div>
+
+            <h3 className="font-sans font-semibold text-chocolate">{topping.name}</h3>
+            <p className="mt-1 text-sm font-semibold text-chocolate/60">
+              +{formatPrice(TOPPING_PRICE)}
+            </p>
+          </article>
+        ))}
       </div>
 
-      {/* Bebidas: una sola línea utilitaria */}
+      {/* Bebidas */}
       <p
         data-section-reveal
         className="mt-20 text-center font-sans text-xs font-semibold uppercase tracking-[0.2em] text-chocolate/60 md:mt-28 md:text-sm"

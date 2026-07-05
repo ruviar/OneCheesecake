@@ -5,8 +5,6 @@ import { useRef } from "react";
 import { formatPrice, PACKS } from "@/lib/data/menu";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-// Escalera descendente para el ritmo de grid roto (solo desktop)
-const STEPS = ["md:mt-0", "md:mt-16", "md:mt-32"] as const;
 
 export default function PacksSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -51,8 +49,8 @@ export default function PacksSection() {
       </div>
 
       <div data-packs-grid className="mt-16 grid gap-16 md:mt-20 md:grid-cols-3 md:gap-12">
-        {PACKS.map((pack, i) => (
-          <article key={pack.id} data-pack className={STEPS[i % STEPS.length]}>
+        {PACKS.map((pack) => (
+          <article key={pack.id} data-pack>
             {pack.highlight ? (
               <span className="inline-block -rotate-2 rounded-full bg-dusty-blue px-4 py-1.5 font-sans text-xs font-bold uppercase tracking-widest text-cream">
                 {pack.highlight}

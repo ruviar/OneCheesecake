@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import Navbar from "@/components/layout/Navbar";
 import SmoothScrolling from "@/components/providers/SmoothScrolling";
-import CustomCursor from "@/components/ui/CustomCursor";
 import ZeroGravity from "@/components/ui/ZeroGravity";
 import { BUSINESS } from "@/lib/data/menu";
 import { caveat, fraunces, quicksand } from "@/lib/fonts";
@@ -35,7 +34,6 @@ export default function RootLayout({
           <Navbar />
           {children}
         </SmoothScrolling>
-        <CustomCursor />
       </body>
     </html>
   );
