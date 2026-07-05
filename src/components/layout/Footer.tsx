@@ -91,8 +91,8 @@ export default function Footer() {
       <Marquee text="Un euro. Un placer. Una experiencia." speed={26} className="border-b border-cream/10" />
 
       <div className="container-melt grid gap-14 py-20 md:grid-cols-2 md:gap-16 md:py-28">
-        {/* Izquierda: cierre grande + CTA */}
-        <div className="md:self-center">
+        {/* Izquierda: cierre grande + CTA (alineado al inicio del mapa) */}
+        <div className="md:self-start">
           <p data-footer-reveal className="font-accent text-3xl text-gold">
             te esperamos
           </p>

@@ -100,7 +100,7 @@ export default function CakeGallery() {
   );
 
   return (
-    <section ref={sectionRef} id="tartas" className="container-melt py-28 md:py-40">
+    <section ref={sectionRef} id="tartas" className="container-melt pb-8 pt-28 md:pb-10 md:pt-40">
       {/* Cabecera */}
       <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-6">
         <div>

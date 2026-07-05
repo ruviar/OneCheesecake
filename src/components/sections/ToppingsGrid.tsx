@@ -66,7 +66,7 @@ export default function ToppingsGrid() {
   );
 
   return (
-    <section ref={sectionRef} id="toppings" className="container-melt pb-16 pt-28 md:pb-20 md:pt-40">
+    <section ref={sectionRef} id="toppings" className="container-melt pb-16 pt-8 md:pb-20 md:pt-10">
       {/* Cabecera */}
       <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-6">
         <div>
