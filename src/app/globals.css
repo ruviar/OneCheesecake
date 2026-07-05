@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg-cream: #F6F3EB;
+  --color-brand-blue: #7B96A6;
+  --color-text-brown: #4A2E1B;
+  --color-accent-gold: #D4B872;
+  --color-white: #FFFFFF;
+}
+
+html,
+body {
+  background-color: var(--color-bg-cream);
+  color: var(--color-text-brown);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-quicksand), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-brand-blue);
+  color: var(--color-bg-cream);
+}
+
+@layer components {
+  .container-cake {
+    @apply mx-auto w-full max-w-7xl px-6 md:px-10;
+  }
+
+  .btn-retro {
+    @apply inline-flex items-center gap-2 rounded-ticket border-2 border-choco-700 bg-cream-100 px-6 py-3
+           font-display font-black uppercase tracking-wide text-choco-700 shadow-retro
+           transition-transform duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px]
+           active:translate-x-0 active:translate-y-0 active:shadow-none;
+  }
+
+  .btn-retro--blue {
+    @apply bg-dustyblue-500 text-cream-100 shadow-retro;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-choco-700/30 bg-cream-50 px-4 py-1.5
+           text-xs uppercase tracking-[0.18em] text-choco-700;
+  }
+
+  .hand-underline {
+    background-image: linear-gradient(transparent 62%, rgba(212, 184, 114, 0.55) 62%, rgba(212, 184, 114, 0.55) 92%, transparent 92%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .ticket-divider {
+    background-image: radial-gradient(circle, #4A2E1B 1.4px, transparent 1.6px);
+    background-size: 14px 2px;
+    background-repeat: repeat-x;
+    background-position: center;
+    height: 2px;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--tw-bg-noise, none);
+    mix-blend-mode: multiply;
+    opacity: 0.18;
+  }
+}
