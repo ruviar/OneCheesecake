@@ -40,8 +40,16 @@ Estética "Melt Cakes" (meltcakes.com): minimalista, cream, producto protagonist
   solo (pointer:fine) + no-reduced-motion; html.custom-cursor oculta el nativo
 - ✅ Mascota rubber-hose en footer
 
-PROYECTO COMPLETO (5/5 fases). Posibles siguientes pasos: imagen real del especial
-del mes, SEO/OG images, git init + deploy.
+PROYECTO COMPLETO (5/5 fases) + iteración post-feedback:
+- Scroll horizontal eliminado → tartas en grid masonry; packs alineados (slot fijo
+  + mt-auto); toppings con fotos reales en /public/images/toppings/{type}-{slug}.png;
+  custom cursor eliminado; especial del mes = El Croissant (la clásica con croissant).
+
+## Deploy
+- Producción: https://one-cheesecake.vercel.app (proyecto Vercel: one-cheesecake)
+- Repo: https://github.com/ruviar/OneCheesecake (conectado a Vercel)
+- CI/CD: `git push` a main = deploy automático a producción. NO usar `vercel deploy` manual.
+- El historial antiguo del repo se conservó vía merge -s ours (a8a76bb).
 
 ## Convenciones de animación
 - Todo motion dentro de gsap.matchMedia("(prefers-reduced-motion: no-preference)")

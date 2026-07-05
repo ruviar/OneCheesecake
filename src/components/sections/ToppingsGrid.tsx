@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import {
   COOKIE_TOPPINGS,
@@ -12,19 +12,34 @@ import {
 } from "@/lib/data/menu";
 import { gsap, useGSAP } from "@/lib/gsap";
 
+interface ToppingEntry {
+  name: string;
+  src: string;
+}
+
 /** "Dulce de Leche" -> "/images/toppings/sauce-dulce-de-leche.png" */
 function toppingImage(type: "sauce" | "cookie", name: string): string {
   return `/images/toppings/${type}-${name.toLowerCase().replace(/\s+/g, "-")}.png`;
 }
 
-function ToppingGroup({
+const SAUCES: ToppingEntry[] = SAUCE_TOPPINGS.map((name) => ({
+  name,
+  src: toppingImage("sauce", name),
+}));
+const COOKIES: ToppingEntry[] = COOKIE_TOPPINGS.map((name) => ({
+  name,
+  src: toppingImage("cookie", name),
+}));
+const ALL_TOPPINGS: ToppingEntry[] = [...SAUCES, ...COOKIES];
+
+function ToppingList({
   title,
-  type,
   items,
+  onHover,
 }: {
   title: string;
-  type: "sauce" | "cookie";
-  items: readonly string[];
+  items: ToppingEntry[];
+  onHover: (src: string) => void;
 }) {
   return (
     <div data-topping-group>
@@ -32,32 +47,44 @@ function ToppingGroup({
         {title}
         <span aria-hidden className="h-px flex-1 bg-chocolate/15" />
       </h3>
-      <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 md:gap-7">
-        {items.map((name) => (
-          <article key={name} data-topping-card className="group">
-            <div className="relative aspect-square overflow-hidden rounded-2xl">
-              <Image
-                src={toppingImage(type, name)}
-                alt={`Topping de ${name.toLowerCase()}`}
-                fill
-                sizes="(min-width: 768px) 22vw, 45vw"
-                className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-              />
+      <ul className="mt-4">
+        {items.map(({ name, src }) => (
+          <li key={name}>
+            <div
+              data-topping-row
+              onPointerEnter={() => onHover(src)}
+              className="group flex items-center gap-4 border-b border-chocolate/10 py-4 md:py-5"
+            >
+              {/* Miniatura solo en móvil; en desktop la foto flota junto al cursor */}
+              <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl md:hidden">
+                <Image
+                  src={src}
+                  alt={`Topping de ${name.toLowerCase()}`}
+                  fill
+                  sizes="48px"
+                  className="object-cover"
+                />
+              </span>
+              <span className="font-wonk font-display text-2xl font-medium text-chocolate transition-[transform,color] duration-300 group-hover:translate-x-2 group-hover:text-gold md:text-3xl">
+                {name}
+              </span>
             </div>
-            <h4 className="mt-3 font-sans font-semibold text-chocolate">{name}</h4>
-          </article>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
 
 export default function ToppingsGrid() {
   const sectionRef = useRef<HTMLElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState<string | null>(null);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
+
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.from("[data-section-reveal]", {
           y: 40,
@@ -68,15 +95,31 @@ export default function ToppingsGrid() {
         });
 
         gsap.utils.toArray<HTMLElement>("[data-topping-group]").forEach((group) => {
-          gsap.from(group.querySelectorAll("[data-topping-card]"), {
-            y: 40,
+          gsap.from(group.querySelectorAll("[data-topping-row]"), {
+            y: 24,
             autoAlpha: 0,
             stagger: 0.05,
-            duration: 0.7,
+            duration: 0.6,
             ease: "power3.out",
             scrollTrigger: { trigger: group, start: "top 80%", once: true },
           });
         });
+      });
+
+      // La foto sigue al cursor (solo puntero fino)
+      mm.add("(pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
+        const section = sectionRef.current;
+        const preview = previewRef.current;
+        if (!section || !preview) return;
+
+        const xTo = gsap.quickTo(preview, "x", { duration: 0.45, ease: "power3" });
+        const yTo = gsap.quickTo(preview, "y", { duration: 0.45, ease: "power3" });
+        function onMove(event: PointerEvent): void {
+          xTo(event.clientX);
+          yTo(event.clientY - 24);
+        }
+        section.addEventListener("pointermove", onMove);
+        return () => section.removeEventListener("pointermove", onMove);
       });
     },
     { scope: sectionRef },
@@ -108,9 +151,39 @@ export default function ToppingsGrid() {
         </p>
       </div>
 
-      <div className="mt-16 space-y-20 md:mt-24">
-        <ToppingGroup title="Salsas" type="sauce" items={SAUCE_TOPPINGS} />
-        <ToppingGroup title="Galleta" type="cookie" items={COOKIE_TOPPINGS} />
+      {/* Listas editoriales; al salir del bloque se oculta la foto flotante */}
+      <div
+        className="mt-14 grid gap-14 md:mt-20 md:grid-cols-2 md:gap-x-20"
+        onPointerLeave={() => setActive(null)}
+      >
+        <ToppingList title="Salsas" items={SAUCES} onHover={setActive} />
+        <ToppingList title="Galleta" items={COOKIES} onHover={setActive} />
+      </div>
+
+      {/* Foto flotante que sigue al cursor (desktop) */}
+      <div
+        ref={previewRef}
+        aria-hidden
+        className="pointer-events-none fixed left-0 top-0 z-40 hidden md:block"
+      >
+        <div
+          className={`relative h-52 w-52 -translate-x-1/2 -translate-y-full rotate-3 overflow-hidden rounded-2xl shadow-[0_24px_48px_rgba(74,46,27,0.3)] transition-all duration-300 ${
+            active ? "scale-100 opacity-100" : "scale-75 opacity-0"
+          }`}
+        >
+          {ALL_TOPPINGS.map(({ src }) => (
+            <Image
+              key={src}
+              src={src}
+              alt=""
+              fill
+              sizes="208px"
+              className={`object-cover transition-opacity duration-200 ${
+                active === src ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Bebidas: una sola línea utilitaria */}
