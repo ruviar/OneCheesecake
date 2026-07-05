@@ -30,7 +30,7 @@ export interface Pack {
 }
 
 export const CAKES: readonly Cake[] = [
-  { id: "clasica", name: "La Clásica", note: "cremosa por dentro, tostada por fuera", slicePrice: 1.0, wholePrice: 15.0, image: "/images/tarta_clasica.png" },
+  { id: "clasica", name: "La Clásica", note: "cremosa por dentro, tostada por fuera", slicePrice: 0.95, wholePrice: 15.0, image: "/images/tarta_clasica.png" },
   { id: "kinder", name: "Kinder Bueno", note: "para los muy chocolateros", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_kinder.png" },
   { id: "choco-blanco", name: "Choco Blanco", note: "dulce, sedosa, peligrosa", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_chocoblanco.png" },
   { id: "lotus", name: "La Lotus", note: "caramelizada y especiada", slicePrice: 2.5, wholePrice: 25.0, image: "/images/tarta_lotus.png" },
